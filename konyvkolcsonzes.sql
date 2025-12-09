@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1:3307
--- Létrehozás ideje: 2025. Dec 09. 09:31
+-- Létrehozás ideje: 2025. Dec 09. 13:24
 -- Kiszolgáló verziója: 10.4.28-MariaDB
 -- PHP verzió: 8.2.4
 
@@ -43,7 +43,7 @@ CREATE TABLE `kolcsonzes` (
 CREATE TABLE `konyvek` (
   `konyvek_id` int(11) NOT NULL,
   `konyvcime` varchar(128) NOT NULL,
-  `szerzoje` varchar(128) NOT NULL,
+  `szerzoje_id` int(128) NOT NULL,
   `mufaj_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -61,13 +61,35 @@ CREATE TABLE `mufaj` (
 -- --------------------------------------------------------
 
 --
+-- Tábla szerkezet ehhez a táblához `osztalyok`
+--
+
+CREATE TABLE `osztalyok` (
+  `osztaly_id` int(11) NOT NULL,
+  `osztaly` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Tábla szerkezet ehhez a táblához `szerzok`
+--
+
+CREATE TABLE `szerzok` (
+  `szerzoje_id` int(11) NOT NULL,
+  `szerzo` varchar(45) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Tábla szerkezet ehhez a táblához `user`
 --
 
 CREATE TABLE `user` (
   `felhasznalo_id` int(32) NOT NULL,
   `diakneve` varchar(128) NOT NULL,
-  `osztaly` int(32) NOT NULL
+  `osztaly_id` int(32) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -94,6 +116,18 @@ ALTER TABLE `konyvek`
 --
 ALTER TABLE `mufaj`
   ADD PRIMARY KEY (`mufaj_id`);
+
+--
+-- A tábla indexei `osztalyok`
+--
+ALTER TABLE `osztalyok`
+  ADD PRIMARY KEY (`osztaly_id`);
+
+--
+-- A tábla indexei `szerzok`
+--
+ALTER TABLE `szerzok`
+  ADD PRIMARY KEY (`szerzoje_id`);
 
 --
 -- A tábla indexei `user`
@@ -139,6 +173,18 @@ ALTER TABLE `kolcsonzes`
 --
 ALTER TABLE `konyvek`
   ADD CONSTRAINT `mufaj_fk` FOREIGN KEY (`mufaj_id`) REFERENCES `mufaj` (`mufaj_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Megkötések a táblához `osztalyok`
+--
+ALTER TABLE `osztalyok`
+  ADD CONSTRAINT `osztalyok_fk` FOREIGN KEY (`osztaly_id`) REFERENCES `user` (`felhasznalo_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Megkötések a táblához `szerzok`
+--
+ALTER TABLE `szerzok`
+  ADD CONSTRAINT `szerzok_fk` FOREIGN KEY (`szerzoje_id`) REFERENCES `konyvek` (`konyvek_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
